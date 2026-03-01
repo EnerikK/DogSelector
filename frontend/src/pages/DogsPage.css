@@ -1,0 +1,23 @@
+/* Top control section */
+.dogs-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Make search area consistent width */
+.dogs-search {
+  max-width: 420px;
+  width: 100%;
+}
+
+/* Ensure delete button aligns vertically with input */
+.dogs-bulk-delete {
+  height: 38px; /* match Bootstrap input height */
+}
+
+/* Remove layout shift */
+.dogs-bulk-delete.invisible {
+  visibility: hidden;
+}

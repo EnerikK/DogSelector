@@ -7,7 +7,7 @@ interface Props {
 
 export function SearchBar({
   onSearch,
-  placeholder = "Search...",
+  placeholder,
 }: Props) {
   const [inputValue, setInputValue] = useState("");
 
