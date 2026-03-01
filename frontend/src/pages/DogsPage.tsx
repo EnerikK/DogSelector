@@ -97,7 +97,17 @@ function DogsPage() {
     {
       id: "rating",
       header: "Rating",
-      accessor: (dog) => <StarRating rating={dog.rating} />,
+      accessor: (dog) => <StarRating rating={dog.rating ?? 0} onChange={async (newRating) => {
+        try {
+          await updateDog({
+            id: dog.id,
+            rating: newRating,
+          });
+          showToast("Rating update", "success");
+        } catch {
+          showToast("Failed to update rating", "error")
+        }
+      }}  />,
     },
     {
       id: "note",
