@@ -21,3 +21,24 @@
 .dogs-bulk-delete.invisible {
   visibility: hidden;
 }
+
+.table-sort-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.table-sort-header .sort-icons {
+  display: flex;
+  flex-direction: column;
+  line-height: 10px;
+  font-size: 12px;
+  color: #b0b7c3;
+}
+
+.table-sort-header .sort-icons .active {
+  color: #2c2f33;
+}

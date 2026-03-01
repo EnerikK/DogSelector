@@ -2,7 +2,7 @@ import React from "react";
 
 export interface Column<T> {
   id: string;
-  header: string;
+  header: React.ReactNode;
   accessor: keyof T | ((row: T) => React.ReactNode);
   className?: string;     
   headerClassName?: string; 

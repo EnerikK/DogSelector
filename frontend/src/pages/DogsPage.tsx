@@ -21,7 +21,8 @@ function DogsPage() {
   const [deleting, setDeleting] = useState(false);
   const [confirmBulk, setConfirmBulk] = useState(false);
   const [dogEdit, setDogEdit] = useState<Dog | null>(null);
-  const { dogs, total , loading , deleteDog, bulkDeleteDogs, updateDog } = useDogs(page,pageSize,search);
+  const [ordering, setOrdering] = useState<string>("");
+  const { dogs, total , loading , deleteDog, bulkDeleteDogs, updateDog } = useDogs(page,pageSize,search,ordering);
 
   const {showToast} = useToast();
 
@@ -41,6 +42,17 @@ function DogsPage() {
       setDeleting(false);
     }
   }
+
+  const handleSort = (field: string) => {
+    setPage(1);
+    if (ordering === field) {
+      setOrdering(`-${field}`);
+    } else if (ordering === `-${field}`) {
+      setOrdering("");
+    } else {
+      setOrdering(field);
+    }
+  };
 
   const columns: Column<Dog>[] = [
     {
@@ -81,12 +93,52 @@ function DogsPage() {
     },
     {
       id: "status",
-      header: "Status",
+       header: (
+        <div
+          className="table-sort-header"
+          onClick={() => handleSort("status")}
+        >
+          <span className="title">Status</span>
+
+          <span className="sort-icons">
+            <i
+              className={`bi bi-caret-up-fill ${
+                ordering === "status" ? "active" : ""
+              }`}
+            />
+            <i
+              className={`bi bi-caret-down-fill ${
+                ordering === "-status" ? "active" : ""
+              }`}
+            />
+          </span>
+        </div>
+      ),      
       accessor: (dog) => <StatusBadge status={dog.status} />,
     },
     {
       id: "breed",
-      header: "Breed",
+      header: (
+        <div
+          className="table-sort-header"
+          onClick={() => handleSort("breed__name")}
+        >
+          <span className="title">Breed</span>
+
+          <span className="sort-icons">
+            <i
+              className={`bi bi-caret-up-fill ${
+                ordering === "breed__name" ? "active" : ""
+              }`}
+            />
+            <i
+              className={`bi bi-caret-down-fill ${
+                ordering === "-breed__name" ? "active" : ""
+              }`}
+            />
+          </span>
+        </div>
+      ),
       accessor: "breed_name",
     },
     {
@@ -96,7 +148,27 @@ function DogsPage() {
     },
     {
       id: "rating",
-      header: "Rating",
+      header: (
+        <div
+          className="table-sort-header"
+          onClick={() => handleSort("rating")}
+        >
+          <span className="title">Rating</span>
+
+          <span className="sort-icons">
+            <i
+              className={`bi bi-caret-up-fill ${
+                ordering === "rating" ? "active" : ""
+              }`}
+            />
+            <i
+              className={`bi bi-caret-down-fill ${
+                ordering === "-rating" ? "active" : ""
+              }`}
+            />
+          </span>
+        </div>
+      ),      
       accessor: (dog) => <StarRating rating={dog.rating ?? 0} onChange={async (newRating) => {
         try {
           await updateDog({

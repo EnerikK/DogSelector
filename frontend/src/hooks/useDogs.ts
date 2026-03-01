@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import type {Dog} from "../types/dogs"
 
-export function useDogs(page:number,pageSize:number,search:string) {
+export function useDogs(page:number,pageSize:number,search:string,ordering:string) {
     const [dogs,setDogs] = useState<Dog[]>([]);
     const [total,setTotal] = useState(0);
     const [loading,setIsLoading] = useState(true);
 
   const fetchDogs = async () => {
     setIsLoading(true);
-
     const res = await api.get("/dogs/", {
-      params: { page, page_size: pageSize, search },
+      params: { page, page_size:pageSize, search, ordering },
     });
 
     setDogs(res.data.results);
@@ -36,7 +35,7 @@ export function useDogs(page:number,pageSize:number,search:string) {
 
   useEffect(() => {
     fetchDogs();
-  }, [page, pageSize, search]);
+  }, [page, pageSize, search,ordering]);
 
   return {
     dogs,
