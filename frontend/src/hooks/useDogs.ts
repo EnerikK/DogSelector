@@ -29,6 +29,11 @@ export function useDogs(page:number,pageSize:number,search:string) {
     await fetchDogs();
   };
 
+  const updateDog = async (updatedDog: Partial<Dog>) => {
+    await api.patch(`/dogs/${updatedDog.id}/`, updatedDog);
+    await fetchDogs();
+};
+
   useEffect(() => {
     fetchDogs();
   }, [page, pageSize, search]);
@@ -40,5 +45,6 @@ export function useDogs(page:number,pageSize:number,search:string) {
     refetch: fetchDogs,
     deleteDog,
     bulkDeleteDogs,
+    updateDog
   };
 }

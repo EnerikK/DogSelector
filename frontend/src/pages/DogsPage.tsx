@@ -10,6 +10,7 @@ import { SearchBar } from "../components/SearchBar";
 import { useToast } from "../components/ToastContext";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import "./DogsPage.css"
+import { SideBar } from "../components/SideBar";
 
 function DogsPage() {
   const [page,setPage] = useState(1);
@@ -19,7 +20,8 @@ function DogsPage() {
   const [dogToDelete, setDogToDelete] = useState<Dog | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [confirmBulk, setConfirmBulk] = useState(false);
-  const { dogs, total , loading , deleteDog, bulkDeleteDogs } = useDogs(page,pageSize,search);
+  const [dogEdit, setDogEdit] = useState<Dog | null>(null);
+  const { dogs, total , loading , deleteDog, bulkDeleteDogs, updateDog } = useDogs(page,pageSize,search);
 
   const {showToast} = useToast();
 
@@ -117,7 +119,14 @@ function DogsPage() {
         >
           Remove
         </button>
-          <button className="border-0 bg-transparent text-primary fw-semibold">
+          <button 
+          type="button" 
+          className="border-0 bg-transparent text-primary fw-semibold"
+          onClick={(e) => {
+            e.stopPropagation();
+            setDogEdit(dog);
+          }}
+          >
             Edit
           </button>
         </div>
@@ -165,6 +174,18 @@ return (
         }}
       />
     </div>
+
+    <SideBar
+      open={!!dogEdit}
+      dog={dogEdit}
+      onClose={() => setDogEdit(null)}
+      onSave={async (updated) => {
+      if (!dogEdit) return; 
+      await updateDog({ id: dogEdit.id, ...updated });
+        showToast("Dog updated", "success");
+        setDogEdit(null);
+      }}
+    />
 
     <ConfirmDialog
       open={!!dogToDelete}
