@@ -10,7 +10,7 @@ function App() {
       <Navbar />
       <div className="container mt-4">
         <Routes>
-          <Route path="/" element={<DogsPage />} />
+          <Route path="/dogSelector" element={<DogsPage />} />
         </Routes>
       </div>
     </BrowserRouter>
