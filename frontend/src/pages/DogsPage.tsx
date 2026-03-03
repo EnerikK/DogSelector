@@ -242,8 +242,8 @@ return (
 
     </div>
 
-    <DataTable data={dogs} columns={columns} />
-
+  <DataTable data={dogs} columns={columns}
+    footer={  
     <div className="mt-4">
       <Pagination
         total={total}
@@ -256,6 +256,8 @@ return (
         }}
       />
     </div>
+    }
+  />
 
     <SideBar
       open={!!dogEdit}

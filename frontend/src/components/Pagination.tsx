@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 function getPageItems(
   page: number,
   totalPages: number,
@@ -43,6 +45,7 @@ export function Pagination({
 }: Props) {
     const totalPages = Math.ceil(total / pageSize);
     const pageItems = getPageItems(page, totalPages, 2);
+    const [goTo, setGoTo] = useState("");
 
     return (
         <div className="d-flex align-items-center justify-content-center gap-3 mt-3">            
@@ -99,6 +102,34 @@ export function Pagination({
                 <option value={20}>20 / page</option>
                 <option value={50}>50 / page</option>
             </select>
+
+            <div className="d-flex align-items-center gap-2">
+            <span>Go to</span>
+            <input
+                type="number"
+                min={1}
+                max={totalPages}
+                className="form-control"
+                style={{ width: 80 }}
+                value={goTo}
+                onChange={(e) => setGoTo(e.target.value)}
+                onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    const pageNumber = Number(goTo);
+
+                    if (!isNaN(pageNumber)) {
+                    const safePage = Math.max(
+                        1,
+                        Math.min(pageNumber, totalPages)
+                    );
+
+                    onPageChange(safePage);
+                    setGoTo("");
+                    }
+                }
+                }}
+            />
+            </div>
         </div>
     );
 }
