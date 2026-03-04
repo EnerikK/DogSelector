@@ -11,6 +11,7 @@ function App() {
       <div className="container mt-4">
         <Routes>
           <Route path="/dogSelector" element={<DogsPage />} />
+          <Route path="/contact" element= {<ContactPage/>}/>
         </Routes>
       </div>
     </BrowserRouter>

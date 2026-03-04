@@ -28,17 +28,17 @@ export function useDogs(page:number,pageSize:number,search:string,ordering:strin
     await fetchDogs();
   };
 
-const updateDog = async (updatedDog: Partial<Dog>) => {
-  await api.patch(`/dogs/${updatedDog.id}/`, updatedDog);
+  const updateDog = async (updatedDog: Partial<Dog>) => {
+    await api.patch(`/dogs/${updatedDog.id}/`, updatedDog);
 
-  setDogs(prev =>
-    prev.map(d =>
-      d.id === updatedDog.id
-        ? { ...d, ...updatedDog }
-        : d
-    )
-  );
-};
+    setDogs(prev =>
+      prev.map(d =>
+        d.id === updatedDog.id
+          ? { ...d, ...updatedDog }
+          : d
+      )
+    );
+  };
 
   useEffect(() => {
     fetchDogs();

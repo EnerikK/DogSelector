@@ -1,0 +1,75 @@
+.contact-wrapper {
+  background: #f3f6fb;
+  padding: 90px 0;
+}
+
+.contact-left {
+  text-align: center;
+}
+
+.contact-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: #2f3e5c;
+}
+
+.contact-subtitle {
+  margin-top: 10px;
+  color: #6c7a93;
+}
+
+.dog-card {
+  margin: 40px auto 20px;
+  padding: 14px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  max-width: 520px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.dog-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 100%;
+}
+
+.dog-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.dog-text {
+  color: #6c7a93;
+  font-size: 14px;
+}
+
+.review-row {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  color: #4a5a73;
+}
+
+.review strong {
+  margin-left: 4px;
+}
+
+.contact-form {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.1);
+}
+
+.contact-form label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.submit-btn {
+  width: 120px;
+}
