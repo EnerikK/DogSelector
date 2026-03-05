@@ -98,6 +98,18 @@ cd dogSelector
 
 ---
 
+## Environment variables
+
+Create the environment file from the example:
+
+Windows:
+
+copy .env.example .env
+
+Mac / Linux:
+
+cp .env.example .env
+
 ## 2. Start the application
 
 Build and start all services:
