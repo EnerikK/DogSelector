@@ -3,6 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Dog,Breed,Description
 from .serializers import DogSerializer,BreedSerializer,DescriptionSerializer
+from .pagination import DogPagination
+
 class BreedViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Breed.objects.all()
     serializer_class = BreedSerializer
@@ -14,6 +16,7 @@ class DescriptionViewSet(viewsets.ReadOnlyModelViewSet):
 class DogViewSet(viewsets.ModelViewSet):
     queryset = Dog.objects.select_related("breed","description").all()
     serializer_class = DogSerializer
+    pagination_class = DogPagination
     
     #We search by breed+Description here
     search_fields = ["breed__name","description__text"]
