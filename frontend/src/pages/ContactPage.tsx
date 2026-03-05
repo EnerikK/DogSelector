@@ -6,6 +6,8 @@ import "./ContactPage.css";
 function ContactPage() {
   const { sendContact } = useContact();
   const { showToast } = useToast();
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     email: "",
@@ -13,33 +15,23 @@ function ContactPage() {
     message: ""
   });
 
-  const [loading, setLoading] = useState(false);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       setLoading(true);
-
       await sendContact(form);
-
       showToast("Message sent successfully", "success");
-
-      setForm({
-        email: "",
-        name: "",
-        message: ""
-      });
-
+      setSent(true);
     } catch {
       showToast("Failed to send message", "error");
     } finally {
@@ -85,49 +77,56 @@ function ContactPage() {
           </div>
           <div className="col-lg-4 offset-lg-1">
             <div className="contact-form">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label>Email</label>
-                  <input
-                    name="email"
-                    type="email"
-                    className="form-control"
-                    placeholder="Type here"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                  />
+              {sent ? (
+                <div className="contact-success">
+                  <h5>Thank you for contacting us.</h5>
+                  <p>We'll get back to you soon.</p>
                 </div>
-                <div className="mb-3">
-                  <label>Name</label>
-                  <input
-                    name="name"
-                    className="form-control"
-                    placeholder="Type here"
-                    value={form.name}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label>Message</label>
-                  <textarea
-                    name="message"
-                    rows={4}
-                    className="form-control"
-                    placeholder="Type here"
-                    value={form.message}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <button
-                  className="btn btn-primary submit-btn"
-                  disabled={loading}
-                >
-                  {loading ? "Sending..." : "Submit"}
-                </button>
-              </form>
+              ) : (
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-3">
+                    <label>Email</label>
+                    <input
+                      name="email"
+                      type="email"
+                      className="form-control"
+                      placeholder="Type here"
+                      value={form.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label>Name</label>
+                    <input
+                      name="name"
+                      className="form-control"
+                      placeholder="Type here"
+                      value={form.name}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label>Message</label>
+                    <textarea
+                      name="message"
+                      rows={4}
+                      className="form-control"
+                      placeholder="Type here"
+                      value={form.message}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <button
+                    className="btn btn-primary submit-btn"
+                    disabled={loading}
+                  >
+                    {loading ? "Sending..." : "Submit"}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>

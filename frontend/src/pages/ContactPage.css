@@ -73,3 +73,16 @@
 .submit-btn {
   width: 120px;
 }
+
+.contact-success {
+  background: #d9f2e3;
+  border-radius: 8px;
+  padding: 24px;
+  color: #1f5132;
+  font-size: 16px;
+}
+
+.contact-success h5 {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
