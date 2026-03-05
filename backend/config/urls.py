@@ -18,16 +18,10 @@ from django.contrib import admin
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 
-from dogs.api import DogViewSet,BreedViewSet,DescriptionViewSet
-from contact.api import ContactSubmissionViewSet
-
 router = DefaultRouter()
-router.register(r"dogs",DogViewSet,basename="dog")
-router.register(r"breeds",BreedViewSet,basename="breed")
-router.register(r"description",DescriptionViewSet,basename="description")
-router.register(r"contact-submission",ContactSubmissionViewSet,basename="contact-submission")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/v1/",include(router.urls))
+    path("api/v1/", include("dogs.urls")),
+    path("api/v1/", include("contact.urls")),
 ]
