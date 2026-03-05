@@ -123,6 +123,16 @@ This will start:
 
 ---
 
+# Seed Data
+
+To populate the database with sample data for testing:
+
+docker compose exec backend python manage.py seed
+
+This command creates sample breeds, descriptions, and dogs so that pagination, search, and sorting features can be demonstrated immediately.
+
+---
+
 ## 3. Run database migrations
 
 docker compose exec backend python manage.py migrate
@@ -184,15 +194,6 @@ Host: localhost
 Port: 5432
 
 You can connect to the database using tools like **DBeaver**.
-
----
-
-# Seed Data
-
-To populate the database with sample data for testing:
-
-docker compose exec backend python manage.py seed
-This command creates sample breeds, descriptions, and dogs so that pagination, search, and sorting features can be demonstrated immediately.
 
 ---
 
