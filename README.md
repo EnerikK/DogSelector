@@ -98,18 +98,6 @@ cd dogSelector
 
 ---
 
-## Environment variables
-
-Create the environment file from the example:
-
-Windows:
-
-copy .env.example .env
-
-Mac / Linux:
-
-cp .env.example .env
-
 ## 2. Start the application
 
 Build and start all services:
@@ -132,10 +120,6 @@ docker compose exec backend python manage.py seed
 This command creates sample breeds, descriptions, and dogs so that pagination, search, and sorting features can be demonstrated immediately.
 
 ---
-
-## 3. Run database migrations
-
-docker compose exec backend python manage.py migrate
 
 ---
 
