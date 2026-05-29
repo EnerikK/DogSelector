@@ -20,6 +20,23 @@ const formatChoice = (value: string) =>
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
 
+const getDogImage = (dog: Dog) =>
+  dog.photo_url || dog.photos[0]?.image_url || "/dogImage.jpg";
+
+const getDogTraits = (dog: Dog) => {
+  const traits = [
+    dog.vaccinated === true ? "Vaccinated" : null,
+    dog.neutered === true ? "Neutered" : null,
+    dog.good_with_children === true ? "Children" : null,
+    dog.good_with_dogs === true ? "Dogs" : null,
+    dog.good_with_cats === true ? "Cats" : null,
+  ].filter((trait): trait is string => Boolean(trait));
+
+  return traits.length > 0 ? traits : ["No traits set"];
+};
+
+const canApplyForDog = (dog: Dog) => dog.adoption_status === "AVAILABLE";
+
 function DogsPage() {
   const [page,setPage] = useState(1);
   const [pageSize,setPageSize] = useState(10);
@@ -30,6 +47,7 @@ function DogsPage() {
   const [confirmBulk, setConfirmBulk] = useState(false);
   const [dogEdit, setDogEdit] = useState<Dog | null>(null);
   const [ordering, setOrdering] = useState<string>("");
+  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
   const { dogs, total , loading , deleteDog, bulkDeleteDogs, updateDog } = useDogs(page,pageSize,search,ordering);
 
   const {showToast} = useToast();
@@ -59,6 +77,18 @@ function DogsPage() {
       setOrdering("");
     } else {
       setOrdering(field);
+    }
+  };
+
+  const handleRatingChange = async (dog: Dog, rating: number) => {
+    try {
+      await updateDog({
+        id: dog.id,
+        rating,
+      });
+      showToast("Rating updated", "success");
+    } catch {
+      showToast("Failed to update rating", "error");
     }
   };
 
@@ -216,16 +246,11 @@ function DogsPage() {
       header: "Traits",
       accessor: (dog) => (
         <div className="dog-traits">
-          {dog.vaccinated === true && <span>Vaccinated</span>}
-          {dog.neutered === true && <span>Neutered</span>}
-          {dog.good_with_children === true && <span>Children</span>}
-          {dog.good_with_dogs === true && <span>Dogs</span>}
-          {dog.good_with_cats === true && <span>Cats</span>}
-          {dog.vaccinated !== true &&
-            dog.neutered !== true &&
-            dog.good_with_children !== true &&
-            dog.good_with_dogs !== true &&
-            dog.good_with_cats !== true && <span className="text-muted">No traits set</span>}
+          {getDogTraits(dog).map((trait) => (
+            <span key={trait} className={trait === "No traits set" ? "text-muted" : ""}>
+              {trait}
+            </span>
+          ))}
         </div>
       ),
     },
@@ -252,17 +277,12 @@ function DogsPage() {
           </span>
         </div>
       ),      
-      accessor: (dog) => <StarRating rating={dog.rating ?? 0} onChange={async (newRating) => {
-        try {
-          await updateDog({
-            id: dog.id,
-            rating: newRating,
-          });
-          showToast("Rating update", "success");
-        } catch {
-          showToast("Failed to update rating", "error")
-        }
-      }}  />,
+      accessor: (dog) => (
+        <StarRating
+          rating={dog.rating ?? 0}
+          onChange={(newRating) => handleRatingChange(dog, newRating)}
+        />
+      ),
     },
     {
       id: "note",
@@ -294,12 +314,18 @@ function DogsPage() {
           >
             Edit
           </button>
-          <Link
-            className="dog-action dog-action-primary"
-            to={`/contact?dog=${dog.id}&name=${encodeURIComponent(dog.name || dog.breed_name)}`}
-          >
-            Apply
-          </Link>
+          {canApplyForDog(dog) ? (
+            <Link
+              className="dog-action dog-action-primary"
+              to={`/contact?dog=${dog.id}&name=${encodeURIComponent(dog.name || dog.breed_name)}`}
+            >
+              Apply
+            </Link>
+          ) : (
+            <span className="dog-action dog-action-disabled" aria-disabled="true">
+              Apply
+            </span>
+          )}
         </div>
       ),
     },
@@ -307,7 +333,31 @@ function DogsPage() {
 
 return (
   <div className="container py-4">
-    <h2 className="mb-4">Dog Finder</h2>
+    <div className="dogs-page-header">
+      <div>
+        <h2 className="mb-1">Dog Finder</h2>
+        <p className="text-muted mb-0">
+          Browse available dogs and start an adoption application.
+        </p>
+      </div>
+
+      <div className="dogs-view-toggle" aria-label="Choose dog finder view">
+        <button
+          type="button"
+          className={viewMode === "cards" ? "active" : ""}
+          onClick={() => setViewMode("cards")}
+        >
+          Cards
+        </button>
+        <button
+          type="button"
+          className={viewMode === "table" ? "active" : ""}
+          onClick={() => setViewMode("table")}
+        >
+          Table
+        </button>
+      </div>
+    </div>
     <div className="dogs-controls">
       <div className="dogs-search">
         <SearchBar
@@ -322,7 +372,7 @@ return (
       <button
         type="button"
         className={`btn btn-danger dogs-bulk-delete ${
-          selectedIds.length === 0 ? "invisible" : ""
+          selectedIds.length === 0 || viewMode !== "table" ? "invisible" : ""
         }`}
         onClick={() => setConfirmBulk(true)}
       >
@@ -331,9 +381,94 @@ return (
 
     </div>
 
-  <DataTable data={dogs} columns={columns}
-    footer={  
-    <div className="mt-4">
+    {viewMode === "cards" ? (
+      <div className="dog-card-grid">
+        {dogs.map((dog) => (
+          <article className="dog-profile-card" key={dog.id}>
+            <div className="dog-card-media">
+              <img src={getDogImage(dog)} alt={dog.name || dog.breed_name} />
+              <div className="dog-card-status">
+                <StatusBadge status={dog.adoption_status} />
+              </div>
+            </div>
+
+            <div className="dog-card-body">
+              <div className="dog-card-heading">
+                <div>
+                  <h3>{dog.name || "Unnamed dog"}</h3>
+                  <p>{dog.breed_name}</p>
+                </div>
+                <StarRating
+                  rating={dog.rating ?? 0}
+                  onChange={(newRating) => handleRatingChange(dog, newRating)}
+                />
+              </div>
+
+              <div className="dog-card-meta">
+                <span>{formatChoice(dog.sex)}</span>
+                <span>{formatChoice(dog.age_group)}</span>
+                <span>{formatChoice(dog.size)}</span>
+              </div>
+
+              <div className="dog-card-location">
+                <i className="bi bi-geo-alt" />
+                <div>
+                  <strong>{[dog.city, dog.country].filter(Boolean).join(", ") || "Unknown location"}</strong>
+                  <span>{dog.shelter_name || "No shelter linked"}</span>
+                </div>
+              </div>
+
+              <div className="dog-traits">
+                {getDogTraits(dog).map((trait) => (
+                  <span key={trait} className={trait === "No traits set" ? "text-muted" : ""}>
+                    {trait}
+                  </span>
+                ))}
+              </div>
+
+              {dog.note && <p className="dog-card-note">{dog.note}</p>}
+            </div>
+
+            <div className="dog-card-actions">
+              <button
+                type="button"
+                className="btn btn-outline-primary btn-sm"
+                onClick={() => setDogEdit(dog)}
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-danger btn-sm"
+                onClick={() => setDogToDelete(dog)}
+              >
+                Remove
+              </button>
+              {canApplyForDog(dog) ? (
+                <Link
+                  className="btn btn-success btn-sm"
+                  to={`/contact?dog=${dog.id}&name=${encodeURIComponent(dog.name || dog.breed_name)}`}
+                >
+                  Apply
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  disabled
+                >
+                  {formatChoice(dog.adoption_status)}
+                </button>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <DataTable data={dogs} columns={columns} />
+    )}
+
+    <div className="dogs-pagination">
       <Pagination
         total={total}
         page={page}
@@ -345,8 +480,6 @@ return (
         }}
       />
     </div>
-    }
-  />
 
     <SideBar
       open={!!dogEdit}

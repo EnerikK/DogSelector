@@ -67,7 +67,7 @@ export function Pagination({
                 {pageItems.map((item, idx) =>
                 item === "..." ? (
                     <li key={`dots-${idx}`} className="page-item disabled">
-                    <span className="page-link">…</span>
+                    <span className="page-link">...</span>
                     </li>
                 ) : (
                     <li
