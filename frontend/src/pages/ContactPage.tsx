@@ -5,17 +5,29 @@ import { useToast } from "../components/toast";
 import type { ContactSubmission, PreferredContactMethod } from "../types/contact";
 import "./ContactPage.css";
 
+type ApplicationForm = Required<Omit<ContactSubmission, "dog">> & {
+  dog: number | null;
+};
+
+const getDogId = (value: string | null) => {
+  if (!value) return null;
+
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+};
+
 function ContactPage() {
   const { sendContact } = useContact();
   const { showToast } = useToast();
   const [searchParams] = useSearchParams();
-  const dogId = searchParams.get("dog");
+  const dogId = getDogId(searchParams.get("dog"));
   const dogName = searchParams.get("name");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const [form, setForm] = useState<ContactSubmission>({
-    dog: dogId ? Number(dogId) : null,
+  const [form, setForm] = useState<ApplicationForm>({
+    dog: dogId,
     email: "",
     name: "",
     phone: "",
@@ -32,18 +44,41 @@ function ContactPage() {
   ) => {
     setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.name === "preferred_contact_method"
-        ? (e.target.value as PreferredContactMethod)
-        : e.target.value,
+      [e.target.name]:
+        e.target.name === "preferred_contact_method"
+          ? (e.target.value as PreferredContactMethod)
+          : e.target.value,
     }));
+    setFormError(null);
   };
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (
+      (form.preferred_contact_method === "phone" ||
+        form.preferred_contact_method === "whatsapp") &&
+      !form.phone.trim()
+    ) {
+      setFormError("Add a phone number for phone or WhatsApp contact.");
+      return;
+    }
+
     try {
       setLoading(true);
-      await sendContact(form);
+      setFormError(null);
+      await sendContact({
+        ...form,
+        dog: form.dog || undefined,
+        email: form.email.trim(),
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        country: form.country.trim(),
+        city: form.city.trim(),
+        message: form.message.trim(),
+        household: form.household.trim(),
+        dog_experience: form.dog_experience.trim(),
+      });
       showToast("Application sent successfully", "success");
       setSent(true);
     } catch {
@@ -109,72 +144,90 @@ function ContactPage() {
                   <p>The rescue team can now review your application.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate={false}>
                   {dogName && (
                     <div className="application-target">
                       Application for <strong>{dogName}</strong>
                     </div>
                   )}
+                  {formError && (
+                    <div className="alert alert-danger py-2" role="alert">
+                      {formError}
+                    </div>
+                  )}
+
                   <div className="mb-3">
-                    <label>Email</label>
+                    <label htmlFor="application-email">Email</label>
                     <input
+                      id="application-email"
                       name="email"
                       type="email"
                       className="form-control"
                       placeholder="Type here"
                       value={form.email}
                       onChange={handleChange}
+                      autoComplete="email"
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label>Name</label>
+                    <label htmlFor="application-name">Name</label>
                     <input
+                      id="application-name"
                       name="name"
                       className="form-control"
                       placeholder="Type here"
                       value={form.name}
                       onChange={handleChange}
+                      autoComplete="name"
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label>Phone</label>
+                    <label htmlFor="application-phone">Phone</label>
                     <input
+                      id="application-phone"
                       name="phone"
+                      type="tel"
                       className="form-control"
                       placeholder="Type here"
                       value={form.phone}
                       onChange={handleChange}
+                      autoComplete="tel"
                     />
                   </div>
                   <div className="row">
                     <div className="col-md-6 mb-3">
-                      <label>Country</label>
+                      <label htmlFor="application-country">Country</label>
                       <input
+                        id="application-country"
                         name="country"
                         className="form-control"
                         placeholder="Greece"
                         value={form.country}
                         onChange={handleChange}
+                        autoComplete="country-name"
                         required
                       />
                     </div>
                     <div className="col-md-6 mb-3">
-                      <label>City</label>
+                      <label htmlFor="application-city">City</label>
                       <input
+                        id="application-city"
                         name="city"
                         className="form-control"
-                        placeholder="Berlin"
+                        placeholder="Athens"
                         value={form.city}
                         onChange={handleChange}
+                        autoComplete="address-level2"
                         required
                       />
                     </div>
                   </div>
                   <div className="mb-3">
-                    <label>Preferred contact</label>
+                    <label htmlFor="application-contact-method">Preferred contact</label>
                     <select
+                      id="application-contact-method"
                       name="preferred_contact_method"
                       className="form-select"
                       value={form.preferred_contact_method}
@@ -187,8 +240,9 @@ function ContactPage() {
                   </div>
 
                   <div className="mb-3">
-                    <label>Household</label>
+                    <label htmlFor="application-household">Household</label>
                     <textarea
+                      id="application-household"
                       name="household"
                       rows={3}
                       className="form-control"
@@ -199,8 +253,9 @@ function ContactPage() {
                   </div>
 
                   <div className="mb-3">
-                    <label>Dog experience</label>
+                    <label htmlFor="application-experience">Dog experience</label>
                     <textarea
+                      id="application-experience"
                       name="dog_experience"
                       rows={3}
                       className="form-control"
@@ -211,8 +266,9 @@ function ContactPage() {
                   </div>
 
                   <div className="mb-4">
-                    <label>Message</label>
+                    <label htmlFor="application-message">Message</label>
                     <textarea
+                      id="application-message"
                       name="message"
                       rows={4}
                       className="form-control"
@@ -223,6 +279,7 @@ function ContactPage() {
                     />
                   </div>
                   <button
+                    type="submit"
                     className="btn btn-primary submit-btn"
                     disabled={loading}
                   >
