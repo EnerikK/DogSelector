@@ -6,6 +6,8 @@ def test_contact_serializer_valid():
     data = {
         "name": "Jane Doe",
         "email": "jane@example.com",
+        "country": "Germany",
+        "city": "Hamburg",
         "message": "Interested in adopting"
     }
 
@@ -16,3 +18,4 @@ def test_contact_serializer_valid():
 
     assert instance.name == data["name"]
     assert instance.email == data["email"]
+    assert instance.status == "NEW"

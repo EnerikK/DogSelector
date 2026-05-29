@@ -6,6 +6,8 @@ def test_create_contact_submission():
     contact = ContactSubmission.objects.create(
         name="John Doe",
         email="john@example.com",
+        country="Germany",
+        city="Berlin",
         message="I want to adopt a dog"
     )
 
@@ -13,3 +15,5 @@ def test_create_contact_submission():
     assert contact.name == "John Doe"
     assert contact.email == "john@example.com"
     assert contact.message == "I want to adopt a dog"
+    assert contact.status == "NEW"
+    assert contact.country == "Germany"
