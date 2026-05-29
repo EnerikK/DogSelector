@@ -5,12 +5,20 @@ import { StatusBadge } from "../components/StatusBadge";
 import { StarRating } from "../components/StarRating";
 import type { Dog } from "../types/dogs";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Pagination } from "../components/Pagination";
 import { SearchBar } from "../components/SearchBar";
-import { useToast } from "../components/ToastContext";
+import { useToast } from "../components/toast";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import "./DogsPage.css"
 import { SideBar } from "../components/SideBar";
+
+const formatChoice = (value: string) =>
+  value
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 
 function DogsPage() {
   const [page,setPage] = useState(1);
@@ -142,7 +150,9 @@ function DogsPage() {
       accessor: (dog) => (
         <div>
           <div className="fw-semibold">{dog.name || "Unnamed dog"}</div>
-          <div className="text-muted small">{dog.sex} · {dog.age_group} · {dog.size}</div>
+          <div className="text-muted small">
+            {[dog.sex, dog.age_group, dog.size].map(formatChoice).join(" / ")}
+          </div>
         </div>
       ),
     },
@@ -264,9 +274,9 @@ function DogsPage() {
       header: "Actions",
       className: "text-center",
       accessor: (dog) => (
-        <div className="d-flex justify-content-center gap-4">
+        <div className="dog-actions">
         <button
-          className="border-0 bg-transparent text-danger fw-semibold"
+          className="dog-action dog-action-danger"
           onClick={(e) => {
             e.stopPropagation();
             setDogToDelete(dog);
@@ -276,7 +286,7 @@ function DogsPage() {
         </button>
           <button 
           type="button" 
-          className="border-0 bg-transparent text-primary fw-semibold"
+          className="dog-action"
           onClick={(e) => {
             e.stopPropagation();
             setDogEdit(dog);
@@ -284,6 +294,12 @@ function DogsPage() {
           >
             Edit
           </button>
+          <Link
+            className="dog-action dog-action-primary"
+            to={`/contact?dog=${dog.id}&name=${encodeURIComponent(dog.name || dog.breed_name)}`}
+          >
+            Apply
+          </Link>
         </div>
       ),
     },

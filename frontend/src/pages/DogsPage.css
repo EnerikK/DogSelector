@@ -67,3 +67,54 @@
   background: transparent;
   padding-left: 0;
 }
+
+.dog-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.2rem;
+  border: 1px solid #e0e6ef;
+  border-radius: 6px;
+  background: #fff;
+  white-space: nowrap;
+}
+
+.dog-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  min-height: 30px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #2563eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.dog-action:hover {
+  background: #eef4ff;
+  color: #1d4ed8;
+}
+
+.dog-action-danger {
+  color: #dc2626;
+}
+
+.dog-action-danger:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.dog-action-primary {
+  color: #047857;
+}
+
+.dog-action-primary:hover {
+  background: #ecfdf5;
+  color: #065f46;
+}

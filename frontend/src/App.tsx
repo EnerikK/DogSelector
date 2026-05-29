@@ -8,12 +8,10 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <div className="container mt-4">
-        <Routes>
-          <Route path="/dogSelector" element={<DogsPage />} />
-          <Route path="/contact" element= {<ContactPage/>}/>
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/dogSelector" element={<DogsPage />} />
+        <Route path="/contact" element= {<ContactPage/>}/>
+      </Routes>
     </BrowserRouter>
   );
 }

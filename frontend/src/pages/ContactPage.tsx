@@ -1,26 +1,40 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useContact } from "../hooks/useContact";
-import { useToast } from "../components/ToastContext";
+import { useToast } from "../components/toast";
+import type { ContactSubmission, PreferredContactMethod } from "../types/contact";
 import "./ContactPage.css";
 
 function ContactPage() {
   const { sendContact } = useContact();
   const { showToast } = useToast();
+  const [searchParams] = useSearchParams();
+  const dogId = searchParams.get("dog");
+  const dogName = searchParams.get("name");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<ContactSubmission>({
+    dog: dogId ? Number(dogId) : null,
     email: "",
     name: "",
-    message: ""
+    phone: "",
+    country: "",
+    city: "",
+    message: "",
+    household: "",
+    dog_experience: "",
+    preferred_contact_method: "email",
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.name === "preferred_contact_method"
+        ? (e.target.value as PreferredContactMethod)
+        : e.target.value,
     }));
   };
 
@@ -30,10 +44,10 @@ function ContactPage() {
     try {
       setLoading(true);
       await sendContact(form);
-      showToast("Message sent successfully", "success");
+      showToast("Application sent successfully", "success");
       setSent(true);
     } catch {
-      showToast("Failed to send message", "error");
+      showToast("Failed to send application", "error");
     } finally {
       setLoading(false);
     }
@@ -41,15 +55,21 @@ function ContactPage() {
 
   return (
     <div className="contact-wrapper">
-      <div className="container">
-        <div className="row align-items-center">
-          <div className="col-lg-7 contact-left">
+      <div className="application-shell">
+        <div className="application-header">
+          <div>
             <h1 className="contact-title">
-              Contact Dog Selector today
+              Start an adoption application
             </h1>
             <p className="contact-subtitle">
-              Discover how Dog Selector can help you save time and bring joy.
+              Share the details a rescue team needs before they contact you.
             </p>
+          </div>
+          <span className="application-step">New application</span>
+        </div>
+
+        <div className="application-layout">
+          <aside className="application-summary">
             <div className="dog-card">
               <img
                 src="/dogImage.jpg"
@@ -58,32 +78,43 @@ function ContactPage() {
               />
               <div>
                 <p className="dog-title">
-                  Hi, I am Woof, your dog selector specialist.
+                  {dogName ? `Applying for ${dogName}` : "Looking for the right rescue dog?"}
                 </p>
                 <p className="dog-text">
-                  Please tell us more about your needs so that we can find the
-                  right fit for you.
+                  Your application is stored for the rescue team so they can review fit, location, and next steps.
                 </p>
               </div>
             </div>
-            <div className="review-row">
-              <span className="review">
-                ✈️ Capterra <strong>4.9</strong>
-              </span>
-              <span className="review">
-                💬 Software advice <strong>4.9</strong>
-              </span>
+            <div className="summary-list">
+              <div>
+                <span>Review focus</span>
+                <strong>Fit, location, experience</strong>
+              </div>
+              <div>
+                <span>Next step</span>
+                <strong>Rescue team follow-up</strong>
+              </div>
+              <div>
+                <span>Saved in</span>
+                <strong>Django Admin applications</strong>
+              </div>
             </div>
-          </div>
-          <div className="col-lg-4 offset-lg-1">
+          </aside>
+
+          <main>
             <div className="contact-form">
               {sent ? (
                 <div className="contact-success">
-                  <h5>Thank you for contacting us.</h5>
-                  <p>We'll get back to you soon.</p>
+                  <h5>Application received.</h5>
+                  <p>The rescue team can now review your application.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
+                  {dogName && (
+                    <div className="application-target">
+                      Application for <strong>{dogName}</strong>
+                    </div>
+                  )}
                   <div className="mb-3">
                     <label>Email</label>
                     <input
@@ -107,13 +138,85 @@ function ContactPage() {
                       required
                     />
                   </div>
+                  <div className="mb-3">
+                    <label>Phone</label>
+                    <input
+                      name="phone"
+                      className="form-control"
+                      placeholder="Type here"
+                      value={form.phone}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="row">
+                    <div className="col-md-6 mb-3">
+                      <label>Country</label>
+                      <input
+                        name="country"
+                        className="form-control"
+                        placeholder="Greece"
+                        value={form.country}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label>City</label>
+                      <input
+                        name="city"
+                        className="form-control"
+                        placeholder="Berlin"
+                        value={form.city}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="mb-3">
+                    <label>Preferred contact</label>
+                    <select
+                      name="preferred_contact_method"
+                      className="form-select"
+                      value={form.preferred_contact_method}
+                      onChange={handleChange}
+                    >
+                      <option value="email">Email</option>
+                      <option value="phone">Phone</option>
+                      <option value="whatsapp">WhatsApp</option>
+                    </select>
+                  </div>
+
+                  <div className="mb-3">
+                    <label>Household</label>
+                    <textarea
+                      name="household"
+                      rows={3}
+                      className="form-control"
+                      placeholder="Home, garden, children, other pets"
+                      value={form.household}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label>Dog experience</label>
+                    <textarea
+                      name="dog_experience"
+                      rows={3}
+                      className="form-control"
+                      placeholder="Previous dogs, rescue experience, training experience"
+                      value={form.dog_experience}
+                      onChange={handleChange}
+                    />
+                  </div>
+
                   <div className="mb-4">
                     <label>Message</label>
                     <textarea
                       name="message"
                       rows={4}
                       className="form-control"
-                      placeholder="Type here"
+                      placeholder="Why do you think this dog is a good fit?"
                       value={form.message}
                       onChange={handleChange}
                       required
@@ -123,12 +226,12 @@ function ContactPage() {
                     className="btn btn-primary submit-btn"
                     disabled={loading}
                   >
-                    {loading ? "Sending..." : "Submit"}
+                    {loading ? "Sending..." : "Apply"}
                   </button>
                 </form>
               )}
             </div>
-          </div>
+          </main>
         </div>
       </div>
     </div>

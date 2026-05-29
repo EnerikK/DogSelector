@@ -1,81 +1,181 @@
 .contact-wrapper {
-  background: #f3f6fb;
-  padding: 90px 0;
+  min-height: calc(100vh - 57px);
+  background: #f6f8fb;
+  padding: 32px 20px;
 }
 
-.contact-left {
-  text-align: center;
+.application-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.application-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
 .contact-title {
-  font-size: 42px;
-  font-weight: 700;
-  color: #2f3e5c;
+  margin: 0;
+  color: #1f2d3d;
+  font-size: 32px;
+  font-weight: 750;
+  line-height: 1.15;
 }
 
 .contact-subtitle {
-  margin-top: 10px;
-  color: #6c7a93;
+  max-width: 650px;
+  margin: 8px 0 0;
+  color: #5b6b80;
+  font-size: 15px;
+}
+
+.application-step {
+  flex: 0 0 auto;
+  border: 1px solid #cfd8e3;
+  border-radius: 999px;
+  color: #405168;
+  background: #fff;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.application-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.application-summary,
+.contact-form {
+  background: #fff;
+  border: 1px solid #e0e6ef;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(31, 45, 61, 0.06);
+}
+
+.application-summary {
+  position: sticky;
+  top: 84px;
+  overflow: hidden;
 }
 
 .dog-card {
-  margin: 40px auto 20px;
-  padding: 14px;
-  background: white;
-  border-radius: 12px;
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  max-width: 520px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid #edf1f6;
 }
 
 .dog-avatar {
-  width: 140px;
-  height: 140px;
-  border-radius: 100%;
+  width: 100%;
+  max-height: 220px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
 }
 
 .dog-title {
-  font-weight: 600;
-  margin-bottom: 6px;
+  margin: 0 0 6px;
+  color: #1f2d3d;
+  font-size: 18px;
+  font-weight: 700;
 }
 
 .dog-text {
-  color: #6c7a93;
+  margin: 0;
+  color: #5b6b80;
   font-size: 14px;
 }
 
-.review-row {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  color: #4a5a73;
+.summary-list {
+  display: grid;
+  gap: 0;
+  padding: 4px 20px 20px;
 }
 
-.review strong {
-  margin-left: 4px;
+.summary-list div {
+  display: grid;
+  gap: 3px;
+  padding: 14px 0;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.summary-list div:last-child {
+  border-bottom: 0;
+}
+
+.summary-list span {
+  color: #718096;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.summary-list strong {
+  color: #263445;
+  font-size: 14px;
 }
 
 .contact-form {
-  background: white;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.1);
+  padding: 24px;
+}
+
+.contact-form form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
 }
 
 .contact-form label {
-  font-weight: 500;
-  margin-bottom: 4px;
+  display: block;
+  margin-bottom: 5px;
+  color: #263445;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.contact-form .form-control,
+.contact-form .form-select {
+  min-height: 40px;
+  border-color: #cfd8e3;
+  color: #1f2d3d;
+}
+
+.contact-form textarea.form-control {
+  min-height: 96px;
+}
+
+.contact-form .mb-3,
+.contact-form .mb-4,
+.contact-form .row,
+.application-target {
+  grid-column: 1 / -1;
+}
+
+.contact-form .row {
+  margin-right: -8px;
+  margin-left: -8px;
+}
+
+.contact-form .row > * {
+  padding-right: 8px;
+  padding-left: 8px;
 }
 
 .submit-btn {
-  width: 120px;
+  width: 140px;
+  min-height: 42px;
+  font-weight: 700;
 }
 
 .contact-success {
-  background: #d9f2e3;
+  background: #eaf7ef;
+  border: 1px solid #cfe8d6;
   border-radius: 8px;
   padding: 24px;
   color: #1f5132;
@@ -83,6 +183,45 @@
 }
 
 .contact-success h5 {
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 6px;
+}
+
+.application-target {
+  background: #eef7f1;
+  border: 1px solid #cfe8d6;
+  border-radius: 6px;
+  color: #244d32;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .application-header,
+  .application-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .application-summary {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .contact-wrapper {
+    padding: 20px 12px;
+  }
+
+  .contact-title {
+    font-size: 26px;
+  }
+
+  .contact-form {
+    padding: 18px;
+  }
+
+  .contact-form form {
+    grid-template-columns: 1fr;
+  }
 }
