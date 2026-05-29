@@ -42,3 +42,28 @@
 .table-sort-header .sort-icons .active {
   color: #2c2f33;
 }
+
+.dog-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  max-width: 260px;
+}
+
+.dog-traits span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: #eef2f7;
+  color: #394150;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.dog-traits .text-muted {
+  background: transparent;
+  padding-left: 0;
+}

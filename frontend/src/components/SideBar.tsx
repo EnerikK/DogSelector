@@ -11,6 +11,7 @@ interface Props {
 
 export function SideBar({open,dog,onClose,onSave}: Props) {
     const [status,setStatus] = useState<Dog["status"]>("PENDING");
+    const [adoptionStatus, setAdoptionStatus] = useState<Dog["adoption_status"]>("AVAILABLE");
     const [note, setNote] = useState("")
     const [loading, setLoading] = useState(false);
     const [noteError, setNoteError] = useState<string | null>(null);
@@ -20,10 +21,18 @@ export function SideBar({open,dog,onClose,onSave}: Props) {
       { value: "ACCEPTED", label: "Accepted" },
       { value: "REJECTED", label: "Rejected" },
     ];
+
+    const adoptionStatusOptions = [
+      { value: "AVAILABLE", label: "Available" },
+      { value: "RESERVED", label: "Reserved" },
+      { value: "ADOPTED", label: "Adopted" },
+      { value: "UNAVAILABLE", label: "Unavailable" },
+    ];
     
     useEffect(() => {
         if(dog){
             setStatus(dog.status);
+            setAdoptionStatus(dog.adoption_status);
             setNote(dog.note ?? "");
         }
     },[dog]);
@@ -48,7 +57,7 @@ export function SideBar({open,dog,onClose,onSave}: Props) {
        }
         try {
             setLoading(true);
-            await onSave({status,note});
+            await onSave({status, adoption_status: adoptionStatus, note});
             onClose();
         } finally {
             setLoading(false);
@@ -80,19 +89,58 @@ export function SideBar({open,dog,onClose,onSave}: Props) {
 
           <div className="bg-light p-3 rounded mb-4">
             <div className="mb-2">
+              <strong>Name</strong>
+              <div>{dog.name || "Unnamed dog"}</div>
+            </div>
+
+            <div className="mb-2">
               <strong>Breed</strong>
               <div>{dog.breed_name}</div>
             </div>
 
+            <div className="mb-2">
+              <strong>Location</strong>
+              <div>{[dog.city, dog.country].filter(Boolean).join(", ") || "Unknown"}</div>
+            </div>
+
+            <div className="mb-2">
+              <strong>Shelter</strong>
+              <div>{dog.shelter_name || "No shelter linked"}</div>
+            </div>
+
             <div>
-              <strong>Description</strong>
+              <strong>Personality</strong>
               <div>{dog.description_text}</div>
             </div>
           </div>
 
           <div className="mb-4">
             <label className="form-label fw-semibold">
-              Change status
+              Adoption status
+            </label>
+
+            {adoptionStatusOptions.map((option) => (
+              <div className="form-check" key={option.value}>
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  name="adoption-status"
+                  value={option.value}
+                  checked={adoptionStatus === option.value}
+                  onChange={() =>
+                    setAdoptionStatus(option.value as Dog["adoption_status"])
+                  }
+                />
+                <label className="form-check-label">
+                  {option.label}
+                </label>
+              </div>
+            ))}
+          </div>
+
+          <div className="mb-4">
+            <label className="form-label fw-semibold">
+              Review status
             </label>
 
         {statusOptions.map((option) => (

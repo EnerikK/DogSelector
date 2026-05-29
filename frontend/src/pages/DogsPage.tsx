@@ -92,29 +92,59 @@ function DogsPage() {
       ),
     },
     {
-      id: "status",
+      id: "adoption_status",
        header: (
         <div
           className="table-sort-header"
-          onClick={() => handleSort("status")}
+          onClick={() => handleSort("adoption_status")}
         >
-          <span className="title">Status</span>
+          <span className="title">Adoption</span>
 
           <span className="sort-icons">
             <i
               className={`bi bi-caret-up-fill ${
-                ordering === "status" ? "active" : ""
+                ordering === "adoption_status" ? "active" : ""
               }`}
             />
             <i
               className={`bi bi-caret-down-fill ${
-                ordering === "-status" ? "active" : ""
+                ordering === "-adoption_status" ? "active" : ""
               }`}
             />
           </span>
         </div>
       ),      
-      accessor: (dog) => <StatusBadge status={dog.status} />,
+      accessor: (dog) => <StatusBadge status={dog.adoption_status} />,
+    },
+    {
+      id: "name",
+      header: (
+        <div
+          className="table-sort-header"
+          onClick={() => handleSort("name")}
+        >
+          <span className="title">Dog</span>
+
+          <span className="sort-icons">
+            <i
+              className={`bi bi-caret-up-fill ${
+                ordering === "name" ? "active" : ""
+              }`}
+            />
+            <i
+              className={`bi bi-caret-down-fill ${
+                ordering === "-name" ? "active" : ""
+              }`}
+            />
+          </span>
+        </div>
+      ),
+      accessor: (dog) => (
+        <div>
+          <div className="fw-semibold">{dog.name || "Unnamed dog"}</div>
+          <div className="text-muted small">{dog.sex} · {dog.age_group} · {dog.size}</div>
+        </div>
+      ),
     },
     {
       id: "breed",
@@ -142,9 +172,52 @@ function DogsPage() {
       accessor: "breed_name",
     },
     {
-      id: "description",
-      header: "Description",
-      accessor: "description_text",
+      id: "location",
+      header: (
+        <div
+          className="table-sort-header"
+          onClick={() => handleSort("country")}
+        >
+          <span className="title">Location</span>
+
+          <span className="sort-icons">
+            <i
+              className={`bi bi-caret-up-fill ${
+                ordering === "country" ? "active" : ""
+              }`}
+            />
+            <i
+              className={`bi bi-caret-down-fill ${
+                ordering === "-country" ? "active" : ""
+              }`}
+            />
+          </span>
+        </div>
+      ),
+      accessor: (dog) => (
+        <div>
+          <div>{[dog.city, dog.country].filter(Boolean).join(", ") || "Unknown"}</div>
+          <div className="text-muted small">{dog.shelter_name || "No shelter linked"}</div>
+        </div>
+      ),
+    },
+    {
+      id: "traits",
+      header: "Traits",
+      accessor: (dog) => (
+        <div className="dog-traits">
+          {dog.vaccinated === true && <span>Vaccinated</span>}
+          {dog.neutered === true && <span>Neutered</span>}
+          {dog.good_with_children === true && <span>Children</span>}
+          {dog.good_with_dogs === true && <span>Dogs</span>}
+          {dog.good_with_cats === true && <span>Cats</span>}
+          {dog.vaccinated !== true &&
+            dog.neutered !== true &&
+            dog.good_with_children !== true &&
+            dog.good_with_dogs !== true &&
+            dog.good_with_cats !== true && <span className="text-muted">No traits set</span>}
+        </div>
+      ),
     },
     {
       id: "rating",
@@ -218,11 +291,11 @@ function DogsPage() {
 
 return (
   <div className="container py-4">
-    <h2 className="mb-4">Dogs</h2>
+    <h2 className="mb-4">Dog Finder</h2>
     <div className="dogs-controls">
       <div className="dogs-search">
         <SearchBar
-          placeholder="Search..."
+          placeholder="Search by name, breed, city, country, shelter..."
           onSearch={(value) => {
             setSearch(value);
             setPage(1);

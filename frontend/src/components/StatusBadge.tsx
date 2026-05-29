@@ -7,11 +7,15 @@ export function StatusBadge({status}: Props) {
         pending: "warning",
         accepted: "success",
         rejected: "secondary",
+        available: "success",
+        reserved: "warning",
+        adopted: "primary",
+        unavailable: "secondary",
     };
 
     return (
         <span className={`badge bg-${colorMap[status.toLocaleLowerCase()] || "secondary"}`}>
-            {status}
+            {status.replace("_", " ")}
         </span>
     );
 }
