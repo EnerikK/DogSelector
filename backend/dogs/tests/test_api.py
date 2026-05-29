@@ -1,6 +1,6 @@
 import pytest
 from rest_framework.test import APIClient
-from dogs.models import Breed, Description, Dog
+from dogs.models import AdoptionStatus, Breed, Description, Dog, Shelter
 
 @pytest.mark.django_db
 def test_list_dogs_paginates():
@@ -26,6 +26,32 @@ def test_patch_inline_rating():
     res = client.patch(f"/api/v1/dogs/{dog.id}/", {"rating": 4}, format="json")
     assert res.status_code == 200
     assert res.data["rating"] == 4
+
+@pytest.mark.django_db
+def test_list_dogs_includes_adoption_fields():
+    client = APIClient()
+    breed = Breed.objects.create(name="Mixed")
+    desc = Description.objects.create(text="Gentle")
+    shelter = Shelter.objects.create(name="Athens Rescue", country="Greece", city="Athens")
+    Dog.objects.create(
+        name="Nala",
+        breed=breed,
+        description=desc,
+        shelter=shelter,
+        adoption_status=AdoptionStatus.AVAILABLE,
+        country="Greece",
+        city="Athens",
+    )
+
+    res = client.get("/api/v1/dogs/")
+
+    assert res.status_code == 200
+    dog = res.data["results"][0]
+    assert dog["name"] == "Nala"
+    assert dog["adoption_status"] == AdoptionStatus.AVAILABLE
+    assert dog["shelter_name"] == "Athens Rescue"
+    assert dog["country"] == "Greece"
+    assert dog["city"] == "Athens"
 
 @pytest.mark.django_db
 def test_bulk_delete():
