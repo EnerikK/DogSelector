@@ -1,0 +1,28 @@
+.auth-shell {
+  min-height: calc(100vh - 57px);
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+  background:
+    radial-gradient(circle at top left, rgba(13, 110, 253, 0.1), transparent 30%),
+    linear-gradient(180deg, #f7fafc 0%, #eef4f8 100%);
+}
+
+.auth-card {
+  width: min(100%, 440px);
+  padding: 1.5rem;
+  border: 1px solid #d9e3ee;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.auth-card h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.9rem;
+}
+
+.auth-card p {
+  margin: 0 0 1.5rem;
+  color: #5b6878;
+}
