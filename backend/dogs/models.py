@@ -1,5 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class TimeStampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -63,6 +66,13 @@ class SourcePlatform(models.TextChoices):
     PARTNER_IMPORT = "PARTNER_IMPORT", "Partner import"
 
 class Shelter(TimeStampedModel):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="shelter_profile",
+        null=True,
+        blank=True,
+    )
     name = models.CharField(max_length=180)
     country = models.CharField(max_length=80, db_index=True)
     city = models.CharField(max_length=120, blank=True, default="", db_index=True)
@@ -70,6 +80,7 @@ class Shelter(TimeStampedModel):
     website = models.URLField(blank=True, default="")
     email = models.EmailField(blank=True, default="")
     phone = models.CharField(max_length=60, blank=True, default="")
+    is_verified = models.BooleanField(default=False, db_index=True)
     source_platform = models.CharField(
         max_length=30,
         choices=SourcePlatform.choices,

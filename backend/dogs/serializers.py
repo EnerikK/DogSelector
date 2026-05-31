@@ -23,6 +23,7 @@ class ShelterSerializer(serializers.ModelSerializer):
             "website",
             "email",
             "phone",
+            "is_verified",
             "source_platform",
             "source_external_id",
         ]
@@ -72,6 +73,16 @@ class DogSerializer(serializers.ModelSerializer):
             "photos",
             "created_at",
             "updated_at", 
+        ]
+        read_only_fields = [
+            "status",
+            "shelter",
+            "shelter_name",
+            "source_platform",
+            "source_external_id",
+            "last_synced_at",
+            "created_at",
+            "updated_at",
         ]
 
     def validate_rating(self,value: int) -> int:

@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from dogs.models import AdoptionStatus
+
 from .models import ContactSubmission
 
 class ContactSubmissionSerializer(serializers.ModelSerializer):
@@ -37,3 +39,7 @@ class ContactSubmissionSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
 
+    def validate_dog(self, value):
+        if value is not None and value.adoption_status != AdoptionStatus.AVAILABLE:
+            raise serializers.ValidationError("Applications are only allowed for available dogs.")
+        return value
